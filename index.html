@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bullseye Game | Yair Tepper</title>
+
+    <!-- All the styling is here in one <style> block, so the whole project is
+         only 2 files: this HTML file and bullseye.js -->
+    <style>
+        /* ---------- basic page look ---------- */
+        :root {
+            --ink: #1f2430;        /* main text color */
+            --muted: #6b7280;      /* small grey text */
+            --line: #d7dbe3;       /* borders */
+            --card: #ffffff;       /* boxes background */
+            --accent: #2563eb;     /* buttons color (blue) */
+            --bg: #f4f6fa;         /* page background */
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 16px 60px;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 34px;
+            text-align: center;
+        }
+
+        .subtitle {
+            margin: 4px 0 24px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        /* every screen of the game sits inside a white card */
+        .card {
+            max-width: 640px;
+            margin: 0 auto 16px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .hidden { display: none; }   /* JS adds/removes this class to switch screens */
+
+        h2 {
+            margin: 0 0 14px;
+            font-size: 20px;
+        }
+
+        /* ---------- buttons ---------- */
+        button {
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .mainBtn {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .mainBtn:hover { background: #1d4ed8; }
+        .mainBtn:disabled { background: #9aa5b8; cursor: not-allowed; }
+
+        .smallBtn {
+            margin-top: 10px;
+            padding: 8px 14px;
+            background: white;
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+        .smallBtn:hover { background: #eef1f6; }
+
+        /* ---------- the settings screen ---------- */
+        .settingRow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        select {
+            font-family: inherit;
+            font-size: 16px;
+            padding: 6px 10px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: white;
+        }
+
+        /* the two "who makes the code" choices */
+        .modeBtn {
+            padding: 8px 14px;
+            background: white;
+            border: 2px solid var(--line);
+            border-radius: 8px;
+        }
+        .modeBtn.selected {
+            border-color: var(--accent);
+            background: #e8efff;
+            font-weight: bold;
+        }
+
+        /* ---------- the game board ---------- */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* one empty/filled spot on the board */
+        .spot {
+            width: 52px;
+            height: 52px;
+            border: 2px solid var(--line);
+            border-radius: 8px;
+            background: white;
+            font-size: 18px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.55);
+        }
+        .spot:hover { border-color: var(--accent); }
+
+        /* one color in the palette at the bottom */
+        .colorBtn {
+            width: 46px;
+            height: 46px;
+            border: 2px solid var(--line);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.6);
+        }
+        .colorBtn.selected {
+            border-color: var(--ink);
+            transform: scale(1.12);   /* the chosen color grows a little */
+        }
+
+        .label {
+            margin: 18px 0 8px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 4px 0 0;
+        }
+
+        #triesText {
+            margin: 10px 0 0;
+            font-weight: bold;
+        }
+
+        /* ---------- the list of past guesses ---------- */
+        .guessRow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .guessNum {
+            width: 26px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* a small square showing one color of an old guess */
+        .oldSpot {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            text-align: center;
+            line-height: 32px;
+            font-size: 13px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.55);
+        }
+
+        /* the feedback pegs (🟢 🟡 ⚪) of an old guess */
+        .pegs {
+            margin-left: 8px;
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+
+        /* ---------- rules box ---------- */
+        .rules {
+            margin-top: 18px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #374151;
+        }
+        .rules ul { margin: 8px 0 0; padding-left: 20px; }
+        .rules li { margin-bottom: 4px; }
+
+        /* ---------- end screen ---------- */
+        #endTitle {
+            text-align: center;
+            font-size: 40px;
+            font-weight: bold;
+            margin: 6px 0 10px;
+        }
+        .won  { color: #15803d; }   /* green */
+        .lost { color: #b91c1c; }   /* red */
+
+        #endText { text-align: center; color: var(--muted); margin-top: 0; }
+
+        #revealRow { justify-content: center; margin-top: 14px; }
+    </style>
+</head>
+<body>
+
+    <h1>Bullseye</h1>
+    <p class="subtitle">A colors guessing game &mdash; by Yair Tepper</p>
+
+    <!-- ============ SCREEN 1: settings ============ -->
+    <section id="setupScreen" class="card">
+        <h2>Game settings</h2>
+
+        <div class="settingRow">
+            <label for="spotsSelect">How many spots to guess?</label>
+            <select id="spotsSelect">
+                <option value="3">3 (easy)</option>
+                <option value="4" selected>4 (normal)</option>
+                <option value="5">5 (hard)</option>
+                <option value="6">6 (very hard)</option>
+            </select>
+        </div>
+
+        <div class="settingRow">
+            <label for="colorsSelect">How many colors to play with?</label>
+            <select id="colorsSelect">
+                <option value="4">4 (easy)</option>
+                <option value="6" selected>6 (normal)</option>
+                <option value="8">8 (hard)</option>
+            </select>
+        </div>
+
+        <div class="settingRow">
+            <span>Who makes the secret code?</span>
+            <span>
+                <!-- these two buttons call the same function with a different value -->
+                <button id="modeComputer" class="modeBtn selected" onclick="chooseMode('computer')">Computer</button>
+                <button id="modeFriend" class="modeBtn" onclick="chooseMode('friend')">A friend</button>
+            </span>
+        </div>
+
+        <button class="mainBtn" onclick="startGame()">Start the game</button>
+
+        <div class="rules">
+            <strong>How to play</strong>
+            <ul>
+                <li>There is a secret line of colors. Your job is to find it.</li>
+                <li>Click a color from the palette, then click a spot to put it there.</li>
+                <li>Click a spot again to make it empty.</li>
+                <li>The same color <strong>can</strong> appear more than once in the code.</li>
+                <li>After every guess you get marks:
+                    <br />&#128994; right color in the right spot
+                    <br />&#128993; right color but in a different spot
+                    <br />&#9898; this color is not in the code
+                </li>
+                <li>The marks do <em>not</em> tell you which spot they belong to &mdash; that is the puzzle!</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============ SCREEN 2: the game itself ============ -->
+    <section id="gameScreen" class="card hidden">
+        <h2 id="gameTitle">Make your guess</h2>
+        <p class="hint" id="instruction"></p>
+        <p id="triesText"></p>
+
+        <p class="label">The board</p>
+        <div class="row" id="board"></div>
+
+        <p class="label">Your colors</p>
+        <div class="row" id="palette"></div>
+
+        <button class="mainBtn" id="mainBtn" onclick="mainButtonClick()"></button>
+        <button class="smallBtn" id="hintBtn" onclick="useHint()">Give me a hint (once per game)</button>
+
+        <p class="label hidden" id="historyLabel">Your old guesses</p>
+        <div id="historyBox"></div>
+    </section>
+
+    <!-- ============ SCREEN 3: win / lose ============ -->
+    <section id="endScreen" class="card hidden">
+        <p id="endTitle"></p>
+        <p id="endText"></p>
+        <p class="label" style="text-align:center;">The secret code was:</p>
+        <div class="row" id="revealRow"></div>
+        <button class="mainBtn" onclick="newGame()">Play again</button>
+    </section>
+
+    <script src="bullseye.js"></script>
+</body>
+</html>
