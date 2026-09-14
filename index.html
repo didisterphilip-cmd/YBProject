@@ -202,11 +202,26 @@
             color: rgba(0,0,0,0.55);
         }
 
-        /* the feedback pegs (🟢 🟡 ⚪) of an old guess */
-        .pegs {
-            margin-inline-start: 8px;
-            font-size: 15px;
-            letter-spacing: 2px;
+        /* The feedback of an old guess.
+           It is a SUMMARY of the whole guess, so it is drawn as two counts
+           and it is pushed away from the squares with a line, so nobody
+           will think that a mark belongs to the square next to it. */
+        .marks {
+            display: flex;
+            gap: 6px;
+            margin-inline-start: 12px;
+            padding-inline-start: 12px;
+            border-inline-start: 1px solid var(--line);
+        }
+
+        .mark {
+            direction: ltr;      /* the icon is always first, then the number */
+            background: #f1f3f7;
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
         /* ---------- rules box ---------- */
@@ -283,12 +298,12 @@
                 <li>לוחצים על צבע מתוך הצבעים שלך, ואז לוחצים על משבצת כדי לשים אותו שם.</li>
                 <li>לחיצה נוספת על משבצת מלאה מרוקנת אותה.</li>
                 <li>אותו צבע <strong>יכול</strong> להופיע יותר מפעם אחת בקוד.</li>
-                <li>אחרי כל ניחוש מקבלים סימונים:
-                    <br />&#128994; צבע נכון במקום הנכון
-                    <br />&#128993; צבע נכון אבל במקום אחר
-                    <br />&#9898; הצבע הזה בכלל לא נמצא בקוד
+                <li>אחרי כל ניחוש מקבלים שני מספרים:
+                    <br />&#128994; כמה צבעים נמצאים בדיוק במקום הנכון
+                    <br />&#128993; כמה צבעים נמצאים בקוד, אבל במשבצת אחרת
                 </li>
-                <li>הסימונים <em>לא</em> מגלים לאיזו משבצת הם שייכים &mdash; זה בדיוק האתגר!</li>
+                <li>שימו לב: המספרים הם סיכום של <em>כל</em> הניחוש. הם לא מגלים
+                    <em>לאיזו</em> משבצת הם שייכים &mdash; זה בדיוק האתגר!</li>
             </ul>
         </div>
     </section>
@@ -309,6 +324,7 @@
         <button class="smallBtn" id="hintBtn" onclick="useHint()">תן לי רמז (פעם אחת במשחק)</button>
 
         <p class="label hidden" id="historyLabel">הניחושים הקודמים שלך</p>
+        <p class="hint hidden" id="historyHint">&#128994; כמה במקום הנכון &nbsp;|&nbsp; &#128993; כמה בקוד אבל במקום אחר (סיכום של כל השורה, לא לפי משבצת)</p>
         <div id="historyBox"></div>
     </section>
 

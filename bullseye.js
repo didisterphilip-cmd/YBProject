@@ -207,9 +207,12 @@ function drawTexts() {
         triesText.innerHTML = 'ניחושים שנשארו: ' + triesLeft;
     }
 
-    // the "Your old guesses" title is shown only after the first guess
+    // the "Your old guesses" title and the reminder of what the marks mean
+    // are shown only after the first guess
     document.getElementById('historyLabel').className =
         (guessNumber > 0) ? 'label' : 'label hidden';
+    document.getElementById('historyHint').className =
+        (guessNumber > 0) ? 'hint' : 'hint hidden';
 
     // the button works only when all the spots are full
     mainBtn.disabled = !lineIsFull();
@@ -351,15 +354,17 @@ function addGuessToHistory(guess, feedback) {
                 '; color:' + numberColor(guess[i]) + ';">' + guess[i] + '</span>';
     }
 
-    // the marks. they are NOT in the order of the spots on purpose -
-    // that is what makes the game a puzzle.
-    var pegs = '';
-    for (var g = 0; g < feedback.exact; g++) { pegs += '🟢'; }      // green
-    for (var y = 0; y < feedback.colorOnly; y++) { pegs += '🟡'; }  // yellow
-    var rest = guess.length - feedback.exact - feedback.colorOnly;
-    for (var w = 0; w < rest; w++) { pegs += '⚪'; }                   // white
-
-    html += '<span class="pegs">' + pegs + '</span></div>';
+    /* The marks are a SUMMARY of the whole guess: how many colors are in
+       the right spot, and how many are in the code but in another spot.
+       They do NOT belong to one square each - that is what makes the game
+       a puzzle. Before, the marks were drawn as one dot for every square,
+       and that made players think that the first dot belongs to the first
+       square. Now they are two counts, with a line between them and the
+       squares, so nobody can read them by mistake as one mark per square. */
+    html += '<span class="marks">' +
+            '<span class="mark">🟢 ' + feedback.exact + '</span>' +
+            '<span class="mark">🟡 ' + feedback.colorOnly + '</span>' +
+            '</span></div>';
 
     // the newest guess goes on top of the list
     var box = document.getElementById('historyBox');
