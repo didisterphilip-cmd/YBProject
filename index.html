@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bullseye Game | Yair Tepper</title>
+    <title>משחק בול פגיעה | יאיר טפר</title>
 
     <!-- All the styling is here in one <style> block, so the whole project is
          only 2 files: this HTML file and bullseye.js -->
@@ -204,7 +204,7 @@
 
         /* the feedback pegs (🟢 🟡 ⚪) of an old guess */
         .pegs {
-            margin-left: 8px;
+            margin-inline-start: 8px;
             font-size: 15px;
             letter-spacing: 2px;
         }
@@ -219,7 +219,7 @@
             font-size: 14px;
             color: #374151;
         }
-        .rules ul { margin: 8px 0 0; padding-left: 20px; }
+        .rules ul { margin: 8px 0 0; padding-inline-start: 20px; }
         .rules li { margin-bottom: 4px; }
 
         /* ---------- end screen ---------- */
@@ -239,76 +239,76 @@
 </head>
 <body>
 
-    <h1>Bullseye</h1>
-    <p class="subtitle">A colors guessing game &mdash; by Yair Tepper</p>
+    <h1>בול פגיעה</h1>
+    <p class="subtitle">משחק ניחוש צבעים &mdash; מאת יאיר טפר</p>
 
     <!-- ============ SCREEN 1: settings ============ -->
     <section id="setupScreen" class="card">
-        <h2>Game settings</h2>
+        <h2>הגדרות המשחק</h2>
 
         <div class="settingRow">
-            <label for="spotsSelect">How many spots to guess?</label>
+            <label for="spotsSelect">כמה משבצות לנחש?</label>
             <select id="spotsSelect">
-                <option value="3">3 (easy)</option>
-                <option value="4" selected>4 (normal)</option>
-                <option value="5">5 (hard)</option>
-                <option value="6">6 (very hard)</option>
+                <option value="3">3 (קל)</option>
+                <option value="4" selected>4 (רגיל)</option>
+                <option value="5">5 (קשה)</option>
+                <option value="6">6 (קשה מאוד)</option>
             </select>
         </div>
 
         <div class="settingRow">
-            <label for="colorsSelect">How many colors to play with?</label>
+            <label for="colorsSelect">עם כמה צבעים לשחק?</label>
             <select id="colorsSelect">
-                <option value="4">4 (easy)</option>
-                <option value="6" selected>6 (normal)</option>
-                <option value="8">8 (hard)</option>
+                <option value="4">4 (קל)</option>
+                <option value="6" selected>6 (רגיל)</option>
+                <option value="8">8 (קשה)</option>
             </select>
         </div>
 
         <div class="settingRow">
-            <span>Who makes the secret code?</span>
+            <span>מי בונה את הקוד הסודי?</span>
             <span>
                 <!-- these two buttons call the same function with a different value -->
-                <button id="modeComputer" class="modeBtn selected" onclick="chooseMode('computer')">Computer</button>
-                <button id="modeFriend" class="modeBtn" onclick="chooseMode('friend')">A friend</button>
+                <button id="modeComputer" class="modeBtn selected" onclick="chooseMode('computer')">המחשב</button>
+                <button id="modeFriend" class="modeBtn" onclick="chooseMode('friend')">חבר</button>
             </span>
         </div>
 
-        <button class="mainBtn" onclick="startGame()">Start the game</button>
+        <button class="mainBtn" onclick="startGame()">התחל משחק</button>
 
         <div class="rules">
-            <strong>How to play</strong>
+            <strong>איך משחקים</strong>
             <ul>
-                <li>There is a secret line of colors. Your job is to find it.</li>
-                <li>Click a color from the palette, then click a spot to put it there.</li>
-                <li>Click a spot again to make it empty.</li>
-                <li>The same color <strong>can</strong> appear more than once in the code.</li>
-                <li>After every guess you get marks:
-                    <br />&#128994; right color in the right spot
-                    <br />&#128993; right color but in a different spot
-                    <br />&#9898; this color is not in the code
+                <li>יש שורה סודית של צבעים, והמטרה שלך היא לגלות אותה.</li>
+                <li>לוחצים על צבע מתוך הצבעים שלך, ואז לוחצים על משבצת כדי לשים אותו שם.</li>
+                <li>לחיצה נוספת על משבצת מלאה מרוקנת אותה.</li>
+                <li>אותו צבע <strong>יכול</strong> להופיע יותר מפעם אחת בקוד.</li>
+                <li>אחרי כל ניחוש מקבלים סימונים:
+                    <br />&#128994; צבע נכון במקום הנכון
+                    <br />&#128993; צבע נכון אבל במקום אחר
+                    <br />&#9898; הצבע הזה בכלל לא נמצא בקוד
                 </li>
-                <li>The marks do <em>not</em> tell you which spot they belong to &mdash; that is the puzzle!</li>
+                <li>הסימונים <em>לא</em> מגלים לאיזו משבצת הם שייכים &mdash; זה בדיוק האתגר!</li>
             </ul>
         </div>
     </section>
 
     <!-- ============ SCREEN 2: the game itself ============ -->
     <section id="gameScreen" class="card hidden">
-        <h2 id="gameTitle">Make your guess</h2>
+        <h2 id="gameTitle">מצא את הקוד הסודי</h2>
         <p class="hint" id="instruction"></p>
         <p id="triesText"></p>
 
-        <p class="label">The board</p>
+        <p class="label">הלוח</p>
         <div class="row" id="board"></div>
 
-        <p class="label">Your colors</p>
+        <p class="label">הצבעים שלך</p>
         <div class="row" id="palette"></div>
 
         <button class="mainBtn" id="mainBtn" onclick="mainButtonClick()"></button>
-        <button class="smallBtn" id="hintBtn" onclick="useHint()">Give me a hint (once per game)</button>
+        <button class="smallBtn" id="hintBtn" onclick="useHint()">תן לי רמז (פעם אחת במשחק)</button>
 
-        <p class="label hidden" id="historyLabel">Your old guesses</p>
+        <p class="label hidden" id="historyLabel">הניחושים הקודמים שלך</p>
         <div id="historyBox"></div>
     </section>
 
@@ -316,9 +316,9 @@
     <section id="endScreen" class="card hidden">
         <p id="endTitle"></p>
         <p id="endText"></p>
-        <p class="label" style="text-align:center;">The secret code was:</p>
+        <p class="label" style="text-align:center;">הקוד הסודי היה:</p>
         <div class="row" id="revealRow"></div>
-        <button class="mainBtn" onclick="newGame()">Play again</button>
+        <button class="mainBtn" onclick="newGame()">שחק שוב</button>
     </section>
 
     <script src="bullseye.js"></script>

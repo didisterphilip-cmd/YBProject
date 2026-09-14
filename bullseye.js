@@ -192,19 +192,19 @@ function drawTexts() {
     var triesText = document.getElementById('triesText');
 
     if (stage === 'making') {
-        title.innerHTML = 'Player 1: build the secret code';
-        instruction.innerHTML = 'Choose a color and click a spot. ' +
-            'When you finish, press the button and the code will be hidden.';
-        mainBtn.innerHTML = 'Hide the code and start guessing';
+        title.innerHTML = 'שחקן 1: בנה את הקוד הסודי';
+        instruction.innerHTML = 'בחר צבע ולחץ על משבצת. ' +
+            'כשתסיים, לחץ על הכפתור והקוד יוסתר משחקן 2.';
+        mainBtn.innerHTML = 'הסתר את הקוד והתחילו לנחש';
         hintBtn.className = 'smallBtn hidden';   // no hints while building
         triesText.innerHTML = '';
     } else {
-        title.innerHTML = 'Find the secret code';
-        instruction.innerHTML = 'Choose a color and click a spot. ' +
-            'Click a full spot again to empty it.';
-        mainBtn.innerHTML = 'Check my guess';
+        title.innerHTML = 'מצא את הקוד הסודי';
+        instruction.innerHTML = 'בחר צבע ולחץ על משבצת. ' +
+            'לחיצה נוספת על משבצת מלאה מרוקנת אותה.';
+        mainBtn.innerHTML = 'בדוק את הניחוש';
         hintBtn.className = hintUsed ? 'smallBtn hidden' : 'smallBtn';
-        triesText.innerHTML = 'Guesses left: ' + triesLeft;
+        triesText.innerHTML = 'ניחושים שנשארו: ' + triesLeft;
     }
 
     // the "Your old guesses" title is shown only after the first guess
@@ -396,14 +396,15 @@ function endGame(playerWon) {
     var text = document.getElementById('endText');
 
     if (playerWon) {
-        title.innerHTML = 'You won!';
+        title.innerHTML = 'ניצחת!';
         title.className = 'won';
-        text.innerHTML = 'You found the code in ' + guessNumber +
-                         (guessNumber === 1 ? ' guess.' : ' guesses.');
+        text.innerHTML = (guessNumber === 1)
+            ? 'מצאת את הקוד בניחוש אחד!'
+            : 'מצאת את הקוד ב-' + guessNumber + ' ניחושים.';
     } else {
-        title.innerHTML = 'You lost';
+        title.innerHTML = 'הפסדת';
         title.className = 'lost';
-        text.innerHTML = 'You used all your ' + MAX_TRIES + ' guesses. Try again!';
+        text.innerHTML = 'נגמרו לך כל ' + MAX_TRIES + ' הניחושים. נסה שוב!';
     }
 
     // show the secret code so the player can see what it was
